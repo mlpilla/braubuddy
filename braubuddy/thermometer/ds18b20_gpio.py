@@ -10,6 +10,7 @@ UNIT_MAP = {
 
 
 class DS18B20Thermometer(IThermometer):
+
     """
     DS18B20 GPIO anagolgue thermometer manufactured by `Maxim
     Integrated Products <http://www.maximintegrated.com>`_.
@@ -18,12 +19,20 @@ class DS18B20Thermometer(IThermometer):
         thermometer devices discovered.
     """
 
-    def __init__(self):
-        try:
-            self._ds18b20_device = ds18b20.DS18B20()
-        except Exception as err:
-            msg = 'No DS18B20 devices discovered'
-            raise DeviceError(msg)
+    def __init__(self, id=None):
+        if not id:
+            try:
+                self._ds18b20_device = ds18b20.DS18B20()
+            except Exception as err:
+                msg = 'No DS18B20 devices discovered'
+                raise DeviceError(msg)
+        else:
+            print ds18b20.DS18B20.get_available_sensors()
+            try:
+                self._ds18b20_device = ds18b20.DS18B20(id)
+            except Exception as err:
+                msg = 'DS18B20 ' + id + ' device not found'
+                raise DeviceError(msg)
 
     def get_temperature(self, units='celsius'):
         try:
